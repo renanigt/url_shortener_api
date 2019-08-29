@@ -27,9 +27,7 @@ describe UrlShortener do
       end
 
       it 'return generated shortened url' do
-        expect(
-          shorter('https://www.google.com')
-        ).to eq('http://localhost:3000/242572b9')
+        expect(shorter('https://www.google.com')).to eq('http://localhost:3000/242572b9')
       end
     end
   end
