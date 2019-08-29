@@ -1,4 +1,4 @@
-class UrlShortener
+class UrlShortenerService
   def initialize(original_url)
     @original_url = original_url
   end

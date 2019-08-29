@@ -1,6 +1,6 @@
 class UrlShortenersController < ApplicationController
   def create
-    render json: UrlShortener.short(url_shortener_params[:url])
+    render json: UrlShortenerService.short(url_shortener_params[:url])
   end
 
   def show
