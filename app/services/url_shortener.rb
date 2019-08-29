@@ -6,7 +6,7 @@ class UrlShortener
   def call
     ShortenedUrl.create!(
       original_url: original_url,
-      shortened_url: shorter
+      token: token
     ) unless already_exists?
 
     shorter
@@ -23,15 +23,11 @@ class UrlShortener
     attr_reader :original_url
 
     def shorter
-      if already_exists?
-        ShortenedUrl.find_by(original_url: original_url).shortened_url
-      else
-        "http://localhost:3000/#{token}"
-      end
+      "http://localhost:3000/#{token}"
     end
 
     def token
-      SecureRandom.hex(4)
+      ShortenedUrl.find_by(original_url: original_url)&.token || SecureRandom.hex(4)
     end
 
     def already_exists?

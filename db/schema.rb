@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 2019_08_29_005358) do
 
   create_table "shortened_urls", force: :cascade do |t|
     t.string "original_url"
-    t.string "shortened_url"
+    t.string "token"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
