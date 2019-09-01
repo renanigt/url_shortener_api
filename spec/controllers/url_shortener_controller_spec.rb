@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe UrlShortenersController do
+describe Api::V1::UrlShortenersController do
   let!(:url_test) { 'http://www.teste.com/' }
 
   describe 'POST create' do
