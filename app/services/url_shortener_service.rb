@@ -1,4 +1,6 @@
 class UrlShortenerService
+  BASE_URL = ENV.fetch('BASE_URL', 'http://localhost:3000')
+
   def initialize(original_url)
     @original_url = original_url
   end
@@ -23,7 +25,7 @@ class UrlShortenerService
     attr_reader :original_url
 
     def shorter
-      "http://localhost:3000/#{token}"
+      "#{BASE_URL}/#{token}"
     end
 
     def token
