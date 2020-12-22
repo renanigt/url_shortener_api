@@ -24,9 +24,14 @@ describe Api::V1::UrlShortenersController do
       ShortenedUrl.create!(original_url: url_test, token: '242572b9')
     end
 
-    it 'redirects to original_url' do
-      post :show, params: { token: '242572b9' }
-      expect(response).to redirect_to(url_test)
+    it 'returns the original_url' do
+      get :show, params: { token: '242572b9' }
+      expect(response.body).to eq(url_test)
+    end
+
+    it 'returns status 200 (success)' do
+      get :show, params: { token: '242572b9' }
+      expect(response.status).to eq(200)
     end
   end
 end

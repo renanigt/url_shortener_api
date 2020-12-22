@@ -6,7 +6,7 @@ module Api
       end
 
       def show
-        redirect_to ShortenedUrl.find_by(token: url_shortener_params[:token]).original_url
+        render json: ShortenedUrl.find_by(token: url_shortener_params[:token]).original_url
       end
 
       private
