@@ -1,3 +1,3 @@
 class ShortenedUrl < ApplicationRecord
-  validates_presence_of :original_url, :token
+  validates :original_url, :token, presence: true, uniqueness: true
 end
