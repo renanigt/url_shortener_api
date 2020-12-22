@@ -2,7 +2,7 @@ module Api
   module V1
     class UrlShortenersController < ApplicationController
       def create
-        render json: UrlShortenerService.short(url_shortener_params[:url]), status: :created
+        render json: ShortenUrlService.new(url_shortener_params[:url]).call, status: :created
       end
 
       def show

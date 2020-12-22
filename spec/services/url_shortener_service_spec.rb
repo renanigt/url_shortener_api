@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe UrlShortenerService do
+describe ShortenUrlService do
   describe '#call' do
     let!(:google_url) { 'https://www.google.com/' }
 

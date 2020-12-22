@@ -1,4 +1,4 @@
-class UrlShortenerService
+class ShortenUrlService
   BASE_URL = ENV.fetch('BASE_URL', 'http://localhost:3000')
 
   def initialize(original_url)
@@ -12,12 +12,6 @@ class UrlShortenerService
     ) unless already_exists?
 
     shorter
-  end
-
-  class << self
-    def short(original_url)
-      self.new(original_url).call
-    end
   end
 
   private

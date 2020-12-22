@@ -19,8 +19,12 @@ describe Api::V1::UrlShortenersController, type: :controller do
       expect(response.body).to eq('http://localhost:3000/80e1df8d')
     end
 
-    it 'calls UrlShortenerService' do
-      expect(UrlShortenerService).to receive(:short).with(url_test)
+    it 'calls ShortenUrlService' do
+      shorten_url_service = instance_double(ShortenUrlService)
+
+      expect(ShortenUrlService).to receive(:new).with(url_test).and_return(shorten_url_service)
+      expect(shorten_url_service).to receive(:call)
+
       post :create, params: { url: url_test }
     end
 
