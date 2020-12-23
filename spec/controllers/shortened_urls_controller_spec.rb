@@ -4,33 +4,47 @@ describe Api::V1::ShortenedUrlsController, type: :controller do
   let!(:url_test) { 'http://www.teste.com/' }
 
   describe 'POST create' do
-    before do
-      allow(SecureRandom).to receive(:hex).and_return('80e1df8d')
-    end
+    context 'with inexisting original_url' do
+      before do
+        allow(SecureRandom).to receive(:hex).and_return('80e1df8d')
+      end
 
-    it 'creates a new ShortenedUrl' do
-      expect {
+      it 'creates a new ShortenedUrl' do
+        expect {
+          post :create, params: { shortened_url: { url: url_test } }
+        }.to change { ShortenedUrl.count }.by(1)
+      end
+
+      it 'returns ShortenedUrl' do
         post :create, params: { shortened_url: { url: url_test } }
-      }.to change { ShortenedUrl.count }.by(1)
+        expect(response.body).to eq('http://localhost:3000/80e1df8d')
+      end
+
+      it 'calls ShortenUrlService' do
+        shorten_url_service = instance_double(ShortenUrlService)
+
+        expect(ShortenUrlService).to receive(:new).with(url_test).and_return(shorten_url_service)
+        expect(shorten_url_service).to receive(:call)
+
+        post :create, params: { shortened_url: { url: url_test } }
+      end
+
+      it 'returns status 201 (created)' do
+        post :create, params: { shortened_url: { url: url_test } }
+        expect(response.status).to eq(201)
+      end
     end
 
-    it 'returns ShortenedUrl' do
-      post :create, params: { shortened_url: { url: url_test } }
-      expect(response.body).to eq('http://localhost:3000/80e1df8d')
-    end
+    context 'with existing original_url' do
+      before do
+        ShortenedUrl.create!(original_url: url_test, token: 'token123')
+      end
 
-    it 'calls ShortenUrlService' do
-      shorten_url_service = instance_double(ShortenUrlService)
+      it 'returns the existing shortened_url if the original_url already exists' do
+        post :create, params: { shortened_url: { url: url_test } }
 
-      expect(ShortenUrlService).to receive(:new).with(url_test).and_return(shorten_url_service)
-      expect(shorten_url_service).to receive(:call)
-
-      post :create, params: { shortened_url: { url: url_test } }
-    end
-
-    it 'returns status 201 (created)' do
-      post :create, params: { shortened_url: { url: url_test } }
-      expect(response.status).to eq(201)
+        expect(response.body).to eq('http://localhost:3000/token123')
+      end
     end
   end
 
