@@ -6,27 +6,18 @@ class ShortenUrlService
   end
 
   def call
-    ShortenedUrl.create!(
-      original_url: original_url,
-      token: token
-    ) unless already_exists?
+    @shortened_url = ShortenedUrl.find_or_create_by(original_url: original_url) do |shortened_url|
+      shortened_url.token = SecureRandom.hex(4)
+    end
 
     shorter
   end
 
   private
 
-    attr_reader :original_url
+    attr_reader :original_url, :shortened_url
 
     def shorter
-      "#{BASE_URL}/#{token}"
-    end
-
-    def token
-      ShortenedUrl.find_by(original_url: original_url)&.token || SecureRandom.hex(4)
-    end
-
-    def already_exists?
-      ShortenedUrl.where(original_url: original_url).exists?
+      "#{BASE_URL}/#{shortened_url.token}"
     end
 end
