@@ -6,8 +6,8 @@ class ShortenUrlService
   end
 
   def call
-    @shortened_url = ShortenedUrl.find_or_create_by(original_url: original_url) do |shortened_url|
-      shortened_url.token = SecureRandom.hex(4)
+    @shortened_url = ShortenedUrl.find_or_create_by(original_url: original_url) do |new_shortened_url|
+      new_shortened_url.token = SecureRandom.hex(4)
     end
 
     shorter
