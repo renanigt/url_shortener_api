@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::UrlShortenersController, type: :controller do
+describe Api::V1::ShortenedUrlsController, type: :controller do
   let!(:url_test) { 'http://www.teste.com/' }
 
   describe 'POST create' do
@@ -10,12 +10,12 @@ describe Api::V1::UrlShortenersController, type: :controller do
 
     it 'creates a new ShortenedUrl' do
       expect {
-        post :create, params: { url: url_test }
+        post :create, params: { shortened_url: { url: url_test } }
       }.to change { ShortenedUrl.count }.by(1)
     end
 
     it 'returns ShortenedUrl' do
-      post :create, params: { url: url_test }
+      post :create, params: { shortened_url: { url: url_test } }
       expect(response.body).to eq('http://localhost:3000/80e1df8d')
     end
 
@@ -25,11 +25,11 @@ describe Api::V1::UrlShortenersController, type: :controller do
       expect(ShortenUrlService).to receive(:new).with(url_test).and_return(shorten_url_service)
       expect(shorten_url_service).to receive(:call)
 
-      post :create, params: { url: url_test }
+      post :create, params: { shortened_url: { url: url_test } }
     end
 
     it 'returns status 201 (created)' do
-      post :create, params: { url: url_test }
+      post :create, params: { shortened_url: { url: url_test } }
       expect(response.status).to eq(201)
     end
   end
@@ -57,7 +57,7 @@ describe Api::V1::UrlShortenersController, type: :controller do
       let(:token) { 'abbh34' }
 
       it 'returns not found error' do
-        get :show, params: { token: 'abbh34' }
+        get :show, params: { token: token }
 
         json_reponse = JSON.parse(response.body)
 
@@ -65,7 +65,7 @@ describe Api::V1::UrlShortenersController, type: :controller do
       end
 
       it 'returns status 404 (not_found)' do
-        get :show, params: { token: 'abbh34' }
+        get :show, params: { token: token }
         expect(response.status).to eq(404)
       end
     end
