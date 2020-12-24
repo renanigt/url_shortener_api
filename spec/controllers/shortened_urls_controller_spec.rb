@@ -51,14 +51,15 @@ describe Api::V1::ShortenedUrlsController, type: :controller do
   describe 'GET show' do
     context 'with existing token' do
       let(:token) { '242572b9' }
+      let!(:shortened_url) { ShortenedUrl.create!(original_url: url_test, token: token) }
 
-      before do
-        ShortenedUrl.create!(original_url: url_test, token: token)
-      end
-
-      it 'returns the original_url' do
+      it 'returns the shortened_url json' do
         get :show, params: { token: token }
-        expect(response.body).to eq(url_test)
+
+        json_reponse = JSON.parse(response.body)
+
+        expect(json_reponse['token']).to eq(shortened_url.token)
+        expect(json_reponse['original_url']).to eq(shortened_url.original_url)
       end
 
       it 'returns status 200 (success)' do
@@ -80,6 +81,40 @@ describe Api::V1::ShortenedUrlsController, type: :controller do
 
       it 'returns status 404 (not_found)' do
         get :show, params: { token: token }
+        expect(response.status).to eq(404)
+      end
+    end
+  end
+
+  describe 'GET go' do
+    context 'with existing token' do
+      let(:token) { '242572b9' }
+      let!(:shortened_url) { ShortenedUrl.create!(original_url: url_test, token: token) }
+
+      it 'redirects to the original_url' do
+        get :go, params: { token: token }
+        expect(response).to redirect_to(shortened_url.original_url)
+      end
+
+      it 'redirects returns status 302' do
+        get :go, params: { token: token }
+        expect(response.status).to eq(302)
+      end
+    end
+
+    context 'with a non existing token' do
+      let(:token) { 'abbh34' }
+
+      it 'returns not found error' do
+        get :go, params: { token: token }
+
+        json_reponse = JSON.parse(response.body)
+
+        expect(json_reponse).to eq("Couldn't find ShortenedUrl")
+      end
+
+      it 'returns status 404 (not_found)' do
+        get :go, params: { token: token }
         expect(response.status).to eq(404)
       end
     end
